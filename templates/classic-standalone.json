@@ -19,9 +19,16 @@
             "required": true
         },
         {
+            "name": "ROUTE_DOMAIN",
+            "description": "The domain the page should be available at.",
+            "value": "www.example.com",
+            "from": "[a-zA-Z0-9.-]",
+            "required": true
+        },
+        {
             "name": "QUICKSTART_REPOSITORY_URL",
             "description": "The URL of the quickstart Git repository.",
-            "value": "https://github.com/openshift-evangelists/wordpress-quickstart",
+            "value": "https://github.com/kgw4it/wordpress-quickstart",
             "required": true
         },
         {
@@ -82,6 +89,12 @@
             "name": "PHP_VERSION",
             "description": "The version of the PHP builder.",
             "value": "7.0",
+            "required": true
+        },
+        {
+            "name": "HEALTHCHECK_URL",
+            "description": "The URL to use for the healthcheck.",
+            "value": "/wp-admin/install.php",
             "required": true
         }
     ],
@@ -230,7 +243,7 @@
 				"readinessProbe": {
 				    "failureThreshold": 3,
 				    "httpGet": {
-					"path": "/wp-admin/install.php",
+					"path": "${HEALTHCHECK_URL}",
 					"port": 8080,
 					"scheme": "HTTP",
 					"httpHeaders": [
@@ -247,7 +260,7 @@
 				"livenessProbe": {
 				    "failureThreshold": 3,
 				    "httpGet": {
-					"path": "/wp-admin/install.php",
+					"path": "${HEALTHCHECK_URL}",
 					"port": 8080,
 					"scheme": "HTTP",
 					"httpHeaders": [
@@ -462,7 +475,7 @@
                 }
             },
             "spec": {
-                "host": "",
+                "host": "${ROUTE_DOMAIN}",
                 "to": {
                     "kind": "Service",
                     "name": "${APPLICATION_NAME}",
@@ -494,7 +507,13 @@
                     "requests": {
                         "storage": "${DATABASE_VOLUME_SIZE}"
                     }
-                }
+                },
+		"selector": {
+    		    "matchLabels": {
+		      "app": "${APPLICATION_NAME}"
+		      "purpose": "mysql-data"
+		    }
+		}
             }
         },
         {
@@ -514,7 +533,13 @@
                     "requests": {
                         "storage": "${WORDPRESS_VOLUME_SIZE}"
                     }
-                }
+                },
+		"selector": {
+    		    "matchLabels": {
+		      "app": "${APPLICATION_NAME}"
+		      "purpose": "wordpress-data"
+		    }
+		}
             }
         }
     ]
