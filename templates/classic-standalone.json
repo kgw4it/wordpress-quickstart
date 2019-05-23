@@ -377,7 +377,7 @@
                   }
                 },
                 "readinessProbe": {
-                  "timeoutSeconds": 1,
+                  "timeoutSeconds": 5,
                   "initialDelaySeconds": 5,
                   "exec": {
                     "command": [
@@ -389,7 +389,7 @@
                   }
                 },
                 "livenessProbe": {
-                  "timeoutSeconds": 1,
+                  "timeoutSeconds": 5,
                   "initialDelaySeconds": 30,
                   "tcpSocket": {
                     "port": 3306
